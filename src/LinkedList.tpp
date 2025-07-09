@@ -10,15 +10,16 @@ bool LinkedList<T>::add(T value) {
         return false;
     }
 
-    Node<T>* newNode = new Node<T>(value);
+    // crea un nodo con el valor pasado y lo inserta en la lista
+    Node<T>* nuevoNodo = new Node<T>(value);
     if (!head) {
-        head = newNode;
+        head = nuevoNodo;
     } else {
-        Node<T>* current = head;
-        while (current->next != nullptr) {
-            current = current->next;
+        Node<T>* actual = head;
+        while (actual->next != nullptr) {
+            actual = actual->next;
         }
-        current->next = newNode;
+        actual->next = nuevoNodo;
     }
     size++;
     return true;
@@ -27,6 +28,7 @@ bool LinkedList<T>::add(T value) {
 // Implementacion de contains
 template <typename T>
 bool LinkedList<T>::contains(T value) const {
+    // recorre la lista para ver si el valor existe en la lista
     Node<T>* current = head;
     while (current != nullptr) {
         if (current->data == value) {
@@ -41,6 +43,7 @@ bool LinkedList<T>::contains(T value) const {
 // Implementacion de clear 
 template <typename T>
 void LinkedList<T>::clear() {
+    // borra el dato y el nodo 
     Node<T>* current = head;
     Node<T>* nextNode;
     while (current != nullptr) {

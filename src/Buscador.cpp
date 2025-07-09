@@ -34,12 +34,13 @@ LinkedList<int>* Buscador::query(const std::string& queryString) const {
                 resultadoCopia->add(actual->data);
                 actual = actual->next;
             }
+            
             return resultadoCopia;
         } else {
             return new LinkedList<int>();
         }
     } else {
-        
+
         const LinkedList<int>* primeraLista = invertedIndex->search(terminosQuery[0]);
         LinkedList<int>* resultadoActual;
 
@@ -50,7 +51,7 @@ LinkedList<int>* Buscador::query(const std::string& queryString) const {
                 resultadoActual->add(nodoTemporal->data);
                 nodoTemporal = nodoTemporal->next;
             }
-        } else { 
+        } else {
             return new LinkedList<int>();
         }
 
@@ -134,7 +135,7 @@ LinkedList<int>* Buscador::querySinPR(const std::string& queryString) const {
         if (!primeraLista) {
             return new LinkedList<int>();
         }
-        
+
         initialResults = new LinkedList<int>();
         Node<int>* nodoTemporal = primeraLista->getHead();
         while(nodoTemporal != nullptr) {

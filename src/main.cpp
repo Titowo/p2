@@ -4,20 +4,20 @@
 #include <map>
 #include <ostream>
 #include <string>
-#include <vector> // Para std::vector
+#include <vector>
 
 #include "Buscador.h"
 #include "Grafo.h"
 #include "InvertedIndex.h"
 #include "ProcesadorDocumentos.h"
-#include "LinkedList.h" // Asegúrate de incluir LinkedList.h aquí también para Node<int>*
+#include "LinkedList.h"
 
 #define STOPWORDS_FILE "data/stopwords_english.dat.txt"
 #define DOCUMENT_FILE "data/gov2_pages.dat"
 #define QUERY_LOGS "data/Log-Queries.dat"
 
-#define QUERY_LOG_LIMIT 10'000 // Puedes ajustar esto a 100 o 1000 para pruebas iniciales si hay problemas de memoria
-#define TOP_K_DOCUMENTOS 10   // Numero de documentos top para considerar la co-relevancia
+#define QUERY_LOG_LIMIT 5'000 
+#define TOP_K_DOCUMENTOS 10
 
 int main() {
     std::cout << "[MAIN] Iniciando motor de busqueda... " << std::endl;
@@ -30,13 +30,13 @@ int main() {
 
     // 2) CARGAR STOPWORDS
     std::cout << "[MAIN] Cargando STOPWORDS..." << std::endl;
-    pd.loadStopWords(STOPWORDS_FILE);
+    pd.cargarStopwords(STOPWORDS_FILE);
 
     // 3) CARGAR DOCUMENTOS
     std::cout << "[MAIN] Cargando y procesando documentos (" << DOCUMENT_FILE
               << ")..." << std::endl;
     auto start_time = std::chrono::high_resolution_clock::now();
-    pd.loadAndProcessDocuments(DOCUMENT_FILE, ii);
+    pd.cargaYProcesadoDocumentos(DOCUMENT_FILE, ii);
     auto end_time = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
         end_time - start_time);
@@ -67,16 +67,17 @@ int main() {
         LinkedList<int> *resultadoQuery = bs.querySinPR(lineaQuery);
 
         if (resultadoQuery && resultadoQuery->getSize() > 0) {
-            std::vector<int> topKDocs;
-            Node<int> *actual = resultadoQuery->getHead();
+            std::vector<int> topKDocs; // vector para guardar los id de los docs, pero hasta K
+            Node<int>* actual = resultadoQuery->getHead();
             int count = 0;
+            // mientras actual no sea nullo y top_k_documentos sea mayor al contador sigue aniadiendo a topKDocs
             while (actual != nullptr && count < TOP_K_DOCUMENTOS) {
                 topKDocs.push_back(actual->data);
                 actual = actual->next;
                 count++;
             }
 
-            // aniadir aristas al grafo para todos los pares en el top-K
+            // creacion del grafico de co-relevancia; por cada elemento em topKcods se aniade una arista al grafo
             for (size_t i = 0; i < topKDocs.size(); ++i) {
                 for (size_t j = i + 1; j < topKDocs.size(); ++j) {
                     g.addVertice(topKDocs[i], topKDocs[j]);
@@ -140,7 +141,7 @@ int main() {
             int count = 0;
             while (actual != nullptr && count < 10) {
                 std::cout << actual->data;
-                if (actual->next != nullptr && count < 9) { // No imprimir coma después del ultimo elemento
+                if (actual->next != nullptr && count < 9) { // no imprimir coma despues del ultimo elemento
                     std::cout << ", ";
                 }
                 actual = actual->next;
@@ -175,7 +176,7 @@ int main() {
             Node<int> *actual = resultadoConPR->getHead();
             int count = 0;
             while (actual != nullptr &&
-                   count < 10) { // Mostrar solo los primeros 10 para concisión
+                   count < 10) { // solo los primero 10 datos
                 std::cout << actual->data;
                 if (actual->next != nullptr && count < 9) {
                     std::cout << ", ";

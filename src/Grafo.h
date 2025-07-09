@@ -20,7 +20,7 @@ public:
 
     std::map<int, double> calcularPageRank(int num_iteraciones = 50, double damping_factor = 0.85, double limite_convergencia = 1e-6) const;
 
-private: 
+private:
     std::map<int, std::map<int, double>> listaAdyacencia;
     std::set<int> Nodos;
     int numAristas;
